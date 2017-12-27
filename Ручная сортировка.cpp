@@ -31,18 +31,8 @@ Node<T> * advance(Node<T> * x, int cnt) {
 }
 
 template <typename T>
-void mysort(Node<T> *& x) {
-    int sz = size(x);
-    if (sz < 2) {
-        return;
-    }
-    Node<T> * l, * r, * cur;
-    l = x;
-    cur = advance(x, sz / 2 - 1);
-    r = cur->next;
-    cur->next = nullptr;
-    mysort(l);
-    mysort(r);
+Node<T> * merge(Node<T> * l, Node<T> * r) {
+    Node<T> * cur, * res;
     if (l->val < r->val) {
         cur = l;
         l = l->next;
@@ -50,7 +40,7 @@ void mysort(Node<T> *& x) {
         cur = r;
         r = r->next;
     }
-    x = cur;
+    res = cur;
     while (l != nullptr && r != nullptr) {
         if (l->val < r->val) {
             cur->next = l;
@@ -66,6 +56,23 @@ void mysort(Node<T> *& x) {
     } else if (r != nullptr) {
         cur->next = r;
     }
+    return res;
+}
+
+template <typename T>
+void mysort(Node<T> *& x) {
+    int sz = size(x);
+    if (sz < 2) {
+        return;
+    }
+    Node<T> * l, * r, * cur;
+    l = x;
+    cur = advance(x, sz / 2 - 1);
+    r = cur->next;
+    cur->next = nullptr;
+    mysort(l);
+    mysort(r);
+    x = merge(l, r);
 }
 
 int main() {
