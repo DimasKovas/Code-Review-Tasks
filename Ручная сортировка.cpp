@@ -1,93 +1,95 @@
-#include <bits/stdc++.h>
+#include <iostream>
 
-using namespace std;
-
+template <typename T>
 struct Node {
-    Node * next = nullptr;
-    int val = 0;
+    Node<T> * next;
+    T val;
+
+    Node() : next(nullptr), val() {}
 
     ~Node() {
         delete next;
     }
 };
 
-void mysort(Node * &x) {
-    int cnt = 0;
-    Node * cur = x;
+template <typename T>
+int size(Node<T> * cur) {
+    int sz = 0;
     while (cur != nullptr) {
-        ++cnt;
+        ++sz;
         cur = cur->next;
     }
-    if (cnt < 2) {
+    return sz;
+}
+
+template <typename T>
+Node<T> * advance(Node<T> * x, int cnt) {
+    for (int i = 0; i < cnt; ++i) {
+        x = x->next;
+    }
+    return x;
+}
+
+template <typename T>
+void mysort(Node<T> *& x) {
+    int sz = size(x);
+    if (sz < 2) {
         return;
     }
-    Node * l, * r;
+    Node<T> * l, * r, * cur;
     l = x;
-    cur = x;
-    for (int i = 0; i < cnt / 2 - 1; ++i) {
-        cur = cur->next;
-    }
+    cur = advance(x, sz / 2 - 1);
     r = cur->next;
     cur->next = nullptr;
     mysort(l);
     mysort(r);
-    cur = new Node();
+    if (l->val < r->val) {
+        cur = l;
+        l = l->next;
+    } else {
+        cur = r;
+        r = r->next;
+    }
     x = cur;
-    Node * curl, * curr;
-    curl = l;
-    curr = r;
-    while (curl != nullptr && curr != nullptr) {
-        cur->next = new Node();
-        if (curl->val < curr->val) {
-            cur->next->val = curl->val;
-            curl = curl->next;
+    while (l != nullptr && r != nullptr) {
+        if (l->val < r->val) {
+            cur->next = l;
+            l = l->next;
         } else {
-            cur->next->val = curr->val;
-            curr = curr->next;
+            cur->next = r;
+            r = r->next;
         }
         cur = cur->next;
     }
-    while (curl != nullptr) {
-        cur->next = new Node();
-        cur->next->val = curl->val;
-        curl = curl->next;
-        cur = cur->next;
+    if (l != nullptr) {
+        cur->next = l;
+    } else if (r != nullptr) {
+        cur->next = r;
     }
-    while (curr != nullptr) {
-        cur->next = new Node();
-        cur->next->val = curr->val;
-        curr = curr->next;
-        cur = cur->next;
-    }
-    delete l;
-    delete r;
-    cur = x;
-    x = x->next;
-    cur->next = nullptr;
-    delete cur;
 }
 
 int main() {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
     int n;
-    cin >> n;
-    Node * beg, * cur;
-    beg = cur = new Node();
-    cin >> cur->val;
+    std::cin >> n;
+    Node<int> * beg, * cur;
+    beg = cur = new Node<int>();
+    std::cin >> cur->val;
     --n;
     for (int i = 0; i < n; ++i) {
-        cur->next = new Node();
-        cin >> cur->next->val;
+        cur->next = new Node<int>();
+        std::cin >> cur->next->val;
         cur = cur->next;        
     }
     mysort(beg);
     cur = beg;
     while (cur != nullptr) {
-        cout << cur->val << ' ';
+        std::cout << cur->val << ' ';
         cur = cur->next;
     }
-    cout << endl;
+    std::cout << std::endl;
+    delete beg;
     return 0;
 } 
