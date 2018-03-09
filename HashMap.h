@@ -9,8 +9,8 @@
 template<class KeyType, class ValueType, class Hash = std::hash<KeyType>>
 class HashMap {
 public:
-    typedef typename std::list<std::pair<const KeyType, ValueType>>::iterator iterator;
-    typedef typename std::list<std::pair<const KeyType, ValueType>>::const_iterator const_iterator;
+    using iterator = typename std::list<std::pair<const KeyType, ValueType>>::iterator;
+    using const_iterator = typename std::list<std::pair<const KeyType, ValueType>>::const_iterator;
 
     HashMap(Hash h = Hash()) : elements_size(0), hasher(h), elements(), table(1, std::make_pair(elements.end(), 0)) {};
 
@@ -68,9 +68,9 @@ public:
             ++table[hs].second;
             ++elements_size;
             table[hs].first = elements.insert(table[hs].first, p);
-            return std::make_pair(table[hs].first, 1);
+            return {table[hs].first, 1};
         }
-        return std::make_pair(it, 0);
+        return {it, 0};
     }
 
     void erase(const KeyType &key) {
@@ -135,7 +135,7 @@ public:
     ValueType &operator[](const KeyType &key) {
         auto it = find(key);
         if (it == elements.end()) {
-            it = insert(std::make_pair(key, ValueType())).first;
+            it = insert({key, ValueType()}).first;
         }
         return it->second;
     }
@@ -151,7 +151,7 @@ public:
     void clear() {
         elements.clear();
         elements_size = 0;
-        table.assign(1, std::make_pair(elements.end(), 0));
+        table.assign(1, {elements.end(), 0});
     } 
 
 private:
@@ -159,7 +159,7 @@ private:
         decltype(elements) old;
         swap(old, elements);
         elements_size = 0;
-        table.assign(sz, make_pair(elements.end(), 0));
+        table.assign(sz, {elements.end(), 0});
         while (!old.empty()) {
             insert(old.front());
             old.pop_front();
@@ -169,5 +169,5 @@ private:
     size_t elements_size;
     Hash hasher;
     std::list<std::pair<const KeyType, ValueType>> elements;
-    std::vector<std::pair<typename decltype(elements)::iterator, size_t>> table;
+    std::vector<std::pair<iterator, size_t>> table;
 };
