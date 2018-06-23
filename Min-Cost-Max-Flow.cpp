@@ -2,10 +2,12 @@
 #include <queue>
 #include <cassert>
 #include <cstddef>
-
+#include <iostream>
+#include <iomanip>
+#include <limits>
 const int N = 300;
 
-const int INF = 1'000'000'000;
+const int INF = std::numeric_limits<int>::max();
 
 struct Edge {
 
@@ -60,7 +62,7 @@ public:
         do {
             changed = false;
             for (const auto &i : edges) {
-                if (i.resCapacity() > 0 && phi[i.from] + i.weight < phi[i.to]) {
+                if (i.resCapacity() > 0 && phi[i.from] != INF && phi[i.from] + i.weight < phi[i.to]) {
                     changed = true;
                     phi[i.to] = phi[i.from] + i.weight;
                 }
@@ -175,36 +177,32 @@ private:
     int source, target;
 };
 
-#include <iostream>
-#include <iomanip>
-using namespace std;
-
 int main(){
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    cout << fixed << setprecision(10);
+    std::ios_base::sync_with_stdio(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
+    std::cout << std::fixed << std::setprecision(10);
     int n, m, k;
-    cin >> n >> m >> k;
+    std::cin >> n >> m >> k;
     Graph g(n);
     g.setTarget(n - 1);
     for (int i = 0; i < m; ++i) {
         int a, b, c;
-        cin >> a >> b >> c;
+        std::cin >> a >> b >> c;
         --a; --b;
         g.addEdge(a, b, 1, c);
         g.addEdge(b, a, 1, c);
     }
     g.findMinCostMaxFlow(k);
     if (g.currentFlow() != k) {
-        cout << "-1" << endl;
+        std::cout << "-1" << std::endl;
     } else {
-        cout << 1.0 * g.currentCost() / k << endl;
+        std::cout << 1.0 * g.currentCost() / k << std::endl;
         auto d = g.getFlowDecomposition();
         for (int i = 0; i < d.size(); ++i) {
-            cout << d[i].size() << ' ';
-            for (int j : d[i]) cout << j / 2 + 1 << ' ';
-            cout << '\n';
+            std::cout << d[i].size() << ' ';
+            for (int j : d[i]) std::cout << j / 2 + 1 << ' ';
+            std::cout << '\n';
         }
     }
     return 0;
